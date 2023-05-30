@@ -16,6 +16,7 @@ const serverlessConfiguration: AWS = {
 		environment: {
 			AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
 			NODE_OPTIONS: '--enable-source-maps --stack-trace-limit=1000',
+			TABLE_USERS: '${self:service}-users-${self:provider.stage}',
 		},
 
 		/*
@@ -27,6 +28,34 @@ const serverlessConfiguration: AWS = {
 	},
 	// import the function via paths
 	functions: {hello},
+
+	/*
+	 * Resources.
+	 */
+	resources: {
+		Resources: {
+			UsersTable: {
+				Type: 'AWS::DynamoDB::Table',
+				Properties: {
+					TableName: '${self:provider.environment.TABLE_USERS}',
+					AttributeDefinitions: [
+						{
+							AttributeName: 'mobile',
+							AttributeType: 'S',
+						}
+					],
+					KeySchema: [
+						{
+							AttributeName: 'mobile',
+							KeyType: 'HASH',
+						}
+					],
+					BillingMode: 'PAY_PER_REQUEST'
+				},
+			}
+		}
+	},
+
 	package: {individually: true},
 	custom: {
 		esbuild: {
