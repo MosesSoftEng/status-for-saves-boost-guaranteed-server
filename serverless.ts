@@ -3,7 +3,7 @@ import type {AWS} from '@serverless/typescript';
 import hello from '@functions/hello';
 
 const serverlessConfiguration: AWS = {
-	service: 'status-for-saves-boost-guaranteed',
+	service: 'status-for-saves-boost-guaranteed-server',
 	frameworkVersion: '3',
 	plugins: ['serverless-esbuild'],
 	provider: {
