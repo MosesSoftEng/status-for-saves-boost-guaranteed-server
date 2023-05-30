@@ -5,7 +5,13 @@ import hello from '@functions/hello';
 const serverlessConfiguration: AWS = {
 	service: 'status-for-saves-server',
 	frameworkVersion: '3',
-	plugins: ['serverless-esbuild'],
+	
+	/*
+	 * Plugins
+	 */
+	plugins: [
+		'serverless-esbuild',
+		'serverless-iam-roles-per-function',],
 	provider: {
 		name: 'aws',
 		runtime: 'nodejs14.x',
