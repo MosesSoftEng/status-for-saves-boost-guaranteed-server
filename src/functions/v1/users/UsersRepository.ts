@@ -1,3 +1,28 @@
+import * as AWS from 'aws-sdk';
+import User from './User';
+
+const docClient = new AWS.DynamoDB.DocumentClient();
+const TABLE_USERS = process.env.TABLE_USERS;
+
+
+/**
+ * Get a user by WhatsApp phone number from the DynamoDB table.
+ * @param {string} whatsAppPhoneNumber - The WhatsApp phone number of the user.
+ * @returns {Promise<User>} A promise that resolves to the user object.
+ */
+export const getUserByWhatsAppPhoneNumber = async (whatsAppPhoneNumber: string): Promise<User> => {
+	const {Item} = await docClient.get({
+		TableName: TABLE_USERS,
+		Key: {
+			whatsAppPhoneNumber,
+		},
+	}).promise();
+
+	return Item as User;
+};
+
+
+/**
  * Create a user in the DynamoDB table.
  * @param {User} user - The user object to be created.
  * @returns {Promise<User>} A promise that resolves to the created user object.
