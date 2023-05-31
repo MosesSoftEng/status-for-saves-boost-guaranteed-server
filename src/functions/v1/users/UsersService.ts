@@ -1,5 +1,5 @@
-import User from "./User";
-import { getUserByWhatsAppPhoneNumber, createUser } from "./UsersRepository";
+import User from './User';
+import { getUserByWhatsAppPhoneNumber, createUser } from './UsersRepository';
 
 
 /**
