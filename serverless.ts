@@ -1,6 +1,7 @@
 import type {AWS} from '@serverless/typescript';
 
 import hello from '@functions/hello';
+import { auth } from '@functions/v1/auth';
 
 const serverlessConfiguration: AWS = {
 	service: 'status-for-saves-server',
@@ -22,7 +23,7 @@ const serverlessConfiguration: AWS = {
 		environment: {
 			AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
 			NODE_OPTIONS: '--enable-source-maps --stack-trace-limit=1000',
-			TABLE_USERS: '${self:service}-users-${self:provider.stage}',
+			TABLE_USERS: '${self:service}-users-01-${self:provider.stage}',
 		},
 
 		/*
@@ -46,13 +47,13 @@ const serverlessConfiguration: AWS = {
 					TableName: '${self:provider.environment.TABLE_USERS}',
 					AttributeDefinitions: [
 						{
-							AttributeName: 'mobile',
+							AttributeName: 'whatsAppPhoneNumber',
 							AttributeType: 'S',
 						}
 					],
 					KeySchema: [
 						{
-							AttributeName: 'mobile',
+							AttributeName: 'whatsAppPhoneNumber',
 							KeyType: 'HASH',
 						}
 					],
