@@ -18,7 +18,10 @@ export const auth = {
 				'dynamodb:GetItem',
 				'dynamodb:PutItem',
 			],
-			Resource: 'arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TABLE_USERS}',
+			Resource: [
+				'arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TABLE_USERS}',
+				'arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TABLE_CONTACTS}'
+			],
 		},
 	],
 };
