@@ -33,8 +33,14 @@ const serverlessConfiguration: AWS = {
 		stage: 'dev',
 		region: 'us-east-1',
 	},
-	// import the function via paths
-	functions: {hello},
+
+	/*
+	 * Functions.
+	 */
+	functions: {
+		hello,
+		auth
+	},
 
 	/*
 	 * Resources.
