@@ -10,11 +10,11 @@ const TABLE_USERS = process.env.TABLE_USERS;
  * @param {string} whatsAppPhoneNumber - The WhatsApp phone number of the user.
  * @returns {Promise<User>} A promise that resolves to the user object.
  */
-export const getUserByWhatsAppPhoneNumber = async (whatsAppPhoneNumber: string): Promise<User> => {
+export const getUserByPhone = async (phone: number): Promise<User> => {
 	const {Item} = await docClient.get({
 		TableName: TABLE_USERS,
 		Key: {
-			whatsAppPhoneNumber,
+			phone,
 		},
 	}).promise();
 
