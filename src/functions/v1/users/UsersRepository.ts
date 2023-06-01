@@ -35,3 +35,21 @@ export const createUser = async (user: User): Promise<User> => {
 
 	return user;
 };
+
+
+/**
+ * Retrieves a list of users from the DynamoDB table.
+ * 
+ * @param {string} [lastIndex=0] - The last index value to start the scan from.
+ * @param {number} [limit=10] - The maximum number of items to retrieve.
+ * @returns {Promise<User[]>} A promise that resolves to an array of User objects.
+ */
+export const getUsers = async (lastIndex = '0', limit = 10): Promise<User[]> => {
+	const result = await docClient.scan({
+		TableName: TABLE_USERS!,
+		Limit: limit,
+		ExclusiveStartKey: lastIndex ? {phone: lastIndex} : undefined,
+	}).promise();
+
+	return result.Items as User[] ?? [];
+};
