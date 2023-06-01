@@ -1,32 +1,23 @@
 import {APIGatewayProxyEvent, APIGatewayProxyResult} from 'aws-lambda';
 import User from '../users/User';
-import {getCreateUser} from '../users/UsersService';
-import Contact from '../contacts/Contact';
-import {createContact} from '../contacts/ContactsRepository';
+import {getCreateUser} from './AuthService';
 
 
 /**
- * Authenticate the user.
+ * Login the user.
  * @param {APIGatewayProxyEvent} event - The event object containing the request details.
  * @returns {Promise<APIGatewayProxyResult>} A promise that resolves to the APIGatewayProxyResult object.
  */
-export const auth = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
+export const login = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
 	const {whatsAppPhoneNumber} = JSON.parse(event.body);
 
 	const user: User = {
-		whatsAppPhoneNumber,
-		date: new Date().getTime()
-	};
-
-	const contact: Contact = {
-		user: whatsAppPhoneNumber,
-		phone: whatsAppPhoneNumber,
+		phone: Number(whatsAppPhoneNumber),
 		date: new Date().getTime()
 	};
 
 	try {
 		await getCreateUser(user);
-		await createContact(contact);
 
 		return {
 			statusCode: 200,
