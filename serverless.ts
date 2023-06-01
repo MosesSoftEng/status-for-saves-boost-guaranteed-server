@@ -2,7 +2,6 @@ import type {AWS} from '@serverless/typescript';
 
 import hello from '@functions/hello';
 import {login} from '@functions/v1/auth';
-import {contactsUnsaved} from '@functions/v1/contacts';
 
 import { users } from '@functions/v1/users';
 
@@ -45,7 +44,6 @@ const serverlessConfiguration: AWS = {
 	 */
 	functions: {
 		hello,
-		contactsUnsaved,
 
 		//* Auth
 		login,
