@@ -1,12 +1,15 @@
 import type {AWS} from '@serverless/typescript';
 
 import hello from '@functions/hello';
-import { auth } from '@functions/v1/auth';
+import {login} from '@functions/v1/auth';
+import {contactsUnsaved} from '@functions/v1/contacts';
+
+import { users } from '@functions/v1/users';
 
 const serverlessConfiguration: AWS = {
-	service: 'status-for-saves-server',
+	service: 'status-4-saves-server',
 	frameworkVersion: '3',
-	
+
 	/*
 	 * Plugins
 	 */
@@ -23,7 +26,10 @@ const serverlessConfiguration: AWS = {
 		environment: {
 			AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
 			NODE_OPTIONS: '--enable-source-maps --stack-trace-limit=1000',
+
+			//* Dynamodb Tables
 			TABLE_USERS: '${self:service}-users-01-${self:provider.stage}',
+			TABLE_CONTACTS: '${self:service}-contacts-01-${self:provider.stage}',
 		},
 
 		/*
@@ -39,7 +45,13 @@ const serverlessConfiguration: AWS = {
 	 */
 	functions: {
 		hello,
-		auth
+		contactsUnsaved,
+
+		//* Auth
+		login,
+
+		//* Users
+		users
 	},
 
 	/*
@@ -53,19 +65,46 @@ const serverlessConfiguration: AWS = {
 					TableName: '${self:provider.environment.TABLE_USERS}',
 					AttributeDefinitions: [
 						{
-							AttributeName: 'whatsAppPhoneNumber',
-							AttributeType: 'S',
+							AttributeName: 'phone',
+							AttributeType: 'N',
 						}
 					],
 					KeySchema: [
 						{
-							AttributeName: 'whatsAppPhoneNumber',
+							AttributeName: 'phone',
 							KeyType: 'HASH',
 						}
 					],
 					BillingMode: 'PAY_PER_REQUEST'
 				},
-			}
+			},
+			ContactsTable: {
+				Type: 'AWS::DynamoDB::Table',
+				Properties: {
+					TableName: '${self:provider.environment.TABLE_CONTACTS}',
+					AttributeDefinitions: [
+						{
+							AttributeName: 'user',
+							AttributeType: 'S',
+						},
+						{
+							AttributeName: 'phone',
+							AttributeType: 'S',
+						},
+					],
+					KeySchema: [
+						{
+							AttributeName: 'user',
+							KeyType: 'HASH',
+						},
+						{
+							AttributeName: 'phone',
+							KeyType: 'RANGE', // Use 'RANGE' for sort key
+						},
+					],
+					BillingMode: 'PAY_PER_REQUEST'
+				},
+			},
 		}
 	},
 
