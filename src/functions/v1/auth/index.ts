@@ -1,12 +1,12 @@
 import { handlerPath } from '@libs/handler-resolver';
 
-export const auth = {
-	handler: `${handlerPath(__dirname)}/handler.auth`,
+export const login = {
+	handler: `${handlerPath(__dirname)}/handler.login`,
 	events: [
 		{
 			http: {
 				method: 'post',
-				path: 'v1/auth',
+				path: 'v1/login',
 				cors: true,
 			},
 		},
