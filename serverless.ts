@@ -3,7 +3,9 @@ import type {AWS} from '@serverless/typescript';
 import hello from '@functions/hello';
 import {login} from '@functions/v1/auth';
 
-import { users } from '@functions/v1/users';
+import {users} from '@functions/v1/users';
+
+import {saveContact} from '@functions/v1/contacts';
 
 const serverlessConfiguration: AWS = {
 	service: 'status-4-saves-server',
@@ -28,7 +30,7 @@ const serverlessConfiguration: AWS = {
 
 			//* Dynamodb Tables
 			TABLE_USERS: '${self:service}-users-01-${self:provider.stage}',
-			TABLE_CONTACTS: '${self:service}-contacts-01-${self:provider.stage}',
+			TABLE_CONTACTS: '${self:service}-contacts-${self:provider.stage}',
 		},
 
 		/*
@@ -49,7 +51,10 @@ const serverlessConfiguration: AWS = {
 		login,
 
 		//* Users
-		users
+		users,
+
+		//* contacts
+		saveContact
 	},
 
 	/*
@@ -83,11 +88,11 @@ const serverlessConfiguration: AWS = {
 					AttributeDefinitions: [
 						{
 							AttributeName: 'user',
-							AttributeType: 'S',
+							AttributeType: 'N',
 						},
 						{
 							AttributeName: 'phone',
-							AttributeType: 'S',
+							AttributeType: 'N',
 						},
 					],
 					KeySchema: [
