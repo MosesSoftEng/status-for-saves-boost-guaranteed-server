@@ -1,6 +1,6 @@
 // TODO: set defaults
 export default interface Contact {
-	user: string;
+	user: number;
 	phone: number;
 	date: number;
 }
