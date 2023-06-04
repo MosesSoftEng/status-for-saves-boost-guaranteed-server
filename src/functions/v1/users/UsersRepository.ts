@@ -44,9 +44,9 @@ export const createUser = async (user: User): Promise<User> => {
  * @param {number} [limit=10] - The maximum number of items to retrieve.
  * @returns {Promise<User[]>} A promise that resolves to an array of User objects.
  */
-export const getUsers = async (lastIndex = '0', limit = 10): Promise<User[]> => {
+export const getUsers = async (lastIndex = 0, limit = 10): Promise<User[]> => {
 	const result = await docClient.scan({
-		TableName: TABLE_USERS!,
+		TableName: TABLE_USERS,
 		Limit: limit,
 		ExclusiveStartKey: lastIndex ? {phone: lastIndex} : undefined,
 	}).promise();
