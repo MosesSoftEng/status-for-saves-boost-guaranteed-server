@@ -24,3 +24,28 @@ export const saveContact = {
 		},
 	],
 };
+
+
+export const deleteContact = {
+	handler: `${handlerPath(__dirname)}/handler.deleteContact`,
+	events: [
+		{
+			http: {
+				method: 'delete',
+				path: 'v1/contacts',
+				cors: true,
+			},
+		},
+	],
+	iamRoleStatements: [
+		{
+			Effect: 'Allow',
+			Action: [
+				'dynamodb:DeleteItem',
+			],
+			Resource: [
+				'arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TABLE_CONTACTS}'
+			],
+		},
+	],
+};
