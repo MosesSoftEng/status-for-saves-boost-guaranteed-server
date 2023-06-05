@@ -5,7 +5,7 @@ import {login} from '@functions/v1/auth';
 
 import {users} from '@functions/v1/users';
 
-import {saveContact} from '@functions/v1/contacts';
+import {saveContact, deleteContact} from '@functions/v1/contacts';
 
 const serverlessConfiguration: AWS = {
 	service: 'status-4-saves-server',
@@ -54,7 +54,8 @@ const serverlessConfiguration: AWS = {
 		users,
 
 		//* contacts
-		saveContact
+		saveContact,
+		deleteContact
 	},
 
 	/*
