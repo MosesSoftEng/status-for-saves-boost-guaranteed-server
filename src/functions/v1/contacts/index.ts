@@ -31,8 +31,8 @@ export const deleteContact = {
 	events: [
 		{
 			http: {
-				method: 'delete',
-				path: 'v1/contacts',
+				method: 'post',
+				path: 'v1/contacts/delete',
 				cors: true,
 			},
 		},
