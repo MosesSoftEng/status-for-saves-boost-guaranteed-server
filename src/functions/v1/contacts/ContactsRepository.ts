@@ -72,3 +72,33 @@ export const deleteContactByUserAndPhone = async (user: number, phone: number): 
 
 	await docClient.delete(params).promise();
 };
+
+
+/**
+ * Retrieves contacts that have saved a specific phone number.
+ * @param {number} phone - The phone number to search for in contacts.
+ * @param {number} [lastIndex=0] - The last index value from a previous paginated query (optional).
+ * @param {number} [limit=10] - The maximum number of contacts to retrieve (optional).
+ * @returns {Promise<Contact[]>} - A promise that resolves to an array of contacts.
+ */
+export const getUsersThatSavePhoneNumber = async (phone: number, lastIndex = 0, limit = 10): Promise<Contact[]> => {
+	const params = {
+		TableName: TABLE_CONTACTS,
+		IndexName: 'PhoneUserIndex',
+		KeyConditionExpression: 'phone = :phoneValue',
+		ExpressionAttributeValues: {
+			':phoneValue': phone,
+		},
+		ExclusiveStartKey: lastIndex
+			? {
+				phone: phone,
+				user: lastIndex,
+			}
+			: undefined,
+		Limit: limit,
+	};
+
+	const result = await docClient.query(params).promise();
+
+	return result.Items as Contact[] ?? [];
+};
