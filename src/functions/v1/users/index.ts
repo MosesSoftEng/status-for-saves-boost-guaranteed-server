@@ -1,4 +1,4 @@
-import { handlerPath } from '@libs/handler-resolver';
+import {handlerPath} from '@libs/handler-resolver';
 
 
 export const users = {
@@ -24,3 +24,30 @@ export const users = {
 		},
 	],
 };
+
+
+export const getUsersSavedUser = {
+	handler: `${handlerPath(__dirname)}/handler.getUsersSavedUser`,
+	events: [
+		{
+			http: {
+				method: 'get',
+				path: 'v1/users/saved/{user}',
+				cors: true,
+			},
+		},
+	],
+	iamRoleStatements: [
+		{
+			Effect: 'Allow',
+			Action: [
+				'dynamodb:Query',
+			],
+			Resource: [
+				'arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TABLE_CONTACTS}',
+				'arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TABLE_CONTACTS}/index/PhoneUserIndex',
+			],
+		},
+	],
+};
+
