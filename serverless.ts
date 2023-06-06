@@ -3,12 +3,12 @@ import type {AWS} from '@serverless/typescript';
 import hello from '@functions/hello';
 import {login} from '@functions/v1/auth';
 
-import {users} from '@functions/v1/users';
+import {getUsersSavedUser, users} from '@functions/v1/users';
 
 import {saveContact, deleteContact} from '@functions/v1/contacts';
 
 const serverlessConfiguration: AWS = {
-	service: 'status-4-saves-server',
+	service: 'status-for-saves-server',
 	frameworkVersion: '3',
 
 	/*
@@ -52,6 +52,7 @@ const serverlessConfiguration: AWS = {
 
 		//* Users
 		users,
+		getUsersSavedUser,
 
 		//* contacts
 		saveContact,
@@ -103,13 +104,44 @@ const serverlessConfiguration: AWS = {
 						},
 						{
 							AttributeName: 'phone',
-							KeyType: 'RANGE', // Use 'RANGE' for sort key
+							KeyType: 'RANGE',
 						},
 					],
-					BillingMode: 'PAY_PER_REQUEST'
+					BillingMode: 'PAY_PER_REQUEST',
+					GlobalSecondaryIndexes: [
+						// TODO: Delete
+						{
+							IndexName: 'PhoneIndex',
+							KeySchema: [
+								{
+									AttributeName: 'phone',
+									KeyType: 'HASH',
+								},
+							],
+							Projection: {
+								ProjectionType: 'ALL',
+							},
+						},
+						{
+							IndexName: 'PhoneUserIndex',
+							KeySchema: [
+								{
+									AttributeName: 'phone',
+									KeyType: 'HASH',
+								},
+								{
+									AttributeName: 'user',
+									KeyType: 'RANGE',
+								},
+							],
+							Projection: {
+								ProjectionType: 'ALL',
+							},
+						},
+					],
 				},
 			},
-		}
+		},
 	},
 
 	package: {individually: true},
