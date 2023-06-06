@@ -1,5 +1,6 @@
 import * as AWS from 'aws-sdk';
 import Contact from './Contact';
+import User from '../users/User';
 
 const docClient = new AWS.DynamoDB.DocumentClient();
 const TABLE_CONTACTS = process.env.TABLE_CONTACTS;
@@ -73,7 +74,6 @@ export const deleteContactByUserAndPhone = async (user: number, phone: number): 
 	await docClient.delete(params).promise();
 };
 
-
 /**
  * Retrieves contacts that have saved a specific phone number.
  * @param {number} phone - The phone number to search for in contacts.
@@ -81,7 +81,7 @@ export const deleteContactByUserAndPhone = async (user: number, phone: number): 
  * @param {number} [limit=10] - The maximum number of contacts to retrieve (optional).
  * @returns {Promise<Contact[]>} - A promise that resolves to an array of contacts.
  */
-export const getUsersThatSavePhoneNumber = async (phone: number, lastIndex = 0, limit = 10): Promise<Contact[]> => {
+export const getUsersThatSavePhoneNumber = async (phone: number, lastIndex = 0, limit = 10): Promise<User[]> => {
 	const params = {
 		TableName: TABLE_CONTACTS,
 		IndexName: 'PhoneUserIndex',
@@ -100,5 +100,7 @@ export const getUsersThatSavePhoneNumber = async (phone: number, lastIndex = 0, 
 
 	const result = await docClient.query(params).promise();
 
-	return result.Items as Contact[] ?? [];
+	const data = result.Items as Contact[] ?? [];
+
+	return data.map(({user, date}) => ({phone: user, date}));
 };
