@@ -141,6 +141,25 @@ const serverlessConfiguration: AWS = {
 					],
 				},
 			},
+			FCMTokenTable: {
+				Type: 'AWS::DynamoDB::Table',
+				Properties: {
+					TableName: '${self:provider.environment.TABLE_FCM_TOKEN}',
+					AttributeDefinitions: [
+						{
+							AttributeName: 'user',
+							AttributeType: 'N',
+						}
+					],
+					KeySchema: [
+						{
+							AttributeName: 'user',
+							KeyType: 'HASH',
+						}
+					],
+					BillingMode: 'PAY_PER_REQUEST'
+				},
+			},
 		},
 	},
 
