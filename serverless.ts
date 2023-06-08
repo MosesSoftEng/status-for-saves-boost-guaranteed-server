@@ -6,9 +6,10 @@ import {login} from '@functions/v1/auth';
 import {getUsersSavedUser, users} from '@functions/v1/users';
 
 import {saveContact, deleteContact} from '@functions/v1/contacts';
+import {saveFCMToken} from '@functions/v1/fcm-token';
 
 const serverlessConfiguration: AWS = {
-	service: 'status-for-saves-server',
+	service: 'status-4-saves-server',
 	frameworkVersion: '3',
 
 	/*
@@ -31,6 +32,7 @@ const serverlessConfiguration: AWS = {
 			//* Dynamodb Tables
 			TABLE_USERS: '${self:service}-users-01-${self:provider.stage}',
 			TABLE_CONTACTS: '${self:service}-contacts-${self:provider.stage}',
+			TABLE_FCM_TOKEN: '${self:service}-fcm-token-01-${self:provider.stage}',
 		},
 
 		/*
@@ -56,7 +58,10 @@ const serverlessConfiguration: AWS = {
 
 		//* contacts
 		saveContact,
-		deleteContact
+		deleteContact,
+
+		//* FCM token
+		saveFCMToken,
 	},
 
 	/*
