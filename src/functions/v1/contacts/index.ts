@@ -17,9 +17,11 @@ export const saveContact = {
 			Effect: 'Allow',
 			Action: [
 				'dynamodb:PutItem',
+				'dynamodb:GetItem',
 			],
 			Resource: [
-				'arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TABLE_CONTACTS}'
+				'arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TABLE_CONTACTS}',
+				'arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TABLE_FCM_TOKEN}'
 			],
 		},
 	],
