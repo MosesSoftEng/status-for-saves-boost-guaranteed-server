@@ -42,3 +42,20 @@ export const sendFCMNotification = async (token: string, notification: Notificat
 };
 
 
+/**
+ * Retrieves the FCM token for the specified user.
+ * @param {number} user - The user identifier.
+ * @returns {Promise<FCMToken|null>} - A promise that resolves to the FCM token or null if not found.
+ */
+export const getUserFCMToken = async (user: number): Promise<FCMToken> => {
+	const params = {
+		TableName: TABLE_FCM_TOKEN,
+		Key: {
+			user,
+		},
+	};
+
+	const {Item} = await docClient.get(params).promise();
+
+	return (Item as FCMToken) ?? null;
+};
