@@ -3,6 +3,10 @@ import Contact from './Contact';
 import {createContact, deleteContactByUserAndPhone} from './ContactsRepository';
 import {getUserFCMToken, sendFCMNotification} from '../fcm-token/FCMTokenRepo';
 import FCMToken from '../fcm-token/FCMToken';
+import {addUserToUsersSaved} from '../users/UsersRepository';
+
+const TABLE_USERS_SAVED = process.env.TABLE_USERS_SAVED;
+
 
 // TODO: Add jsdocs and lof error message to console.
 export const saveContact = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
@@ -17,6 +21,9 @@ export const saveContact = async (event: APIGatewayProxyEvent): Promise<APIGatew
 	try {
 		await createContact(contact);
 
+		const tableName = TABLE_USERS_SAVED.replace('*', contact.user.toString());
+		await addUserToUsersSaved(tableName, contact.phone);
+
 		const fcmToken: FCMToken = await getUserFCMToken(Number(phone));
 
 		if(fcmToken)
@@ -30,7 +37,6 @@ export const saveContact = async (event: APIGatewayProxyEvent): Promise<APIGatew
 			},
 			body: JSON.stringify({
 				message: 'Contact save',
-				data: fcmToken
 			}),
 		};
 	} catch ({message}) {
