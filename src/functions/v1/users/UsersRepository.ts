@@ -2,6 +2,9 @@ import * as AWS from 'aws-sdk';
 import User from './User';
 
 const docClient = new AWS.DynamoDB.DocumentClient();
+const dynamodb = new AWS.DynamoDB();
+AWS.config.update({region: 'us-east-1'});
+
 const TABLE_USERS = process.env.TABLE_USERS;
 
 
@@ -39,7 +42,7 @@ export const createUser = async (user: User): Promise<User> => {
 
 /**
  * Retrieves a list of users from the DynamoDB table.
- * 
+ *
  * @param {string} [lastIndex=0] - The last index value to start the scan from.
  * @param {number} [limit=10] - The maximum number of items to retrieve.
  * @returns {Promise<User[]>} A promise that resolves to an array of User objects.
@@ -52,4 +55,32 @@ export const getUsers = async (lastIndex = 0, limit = 10): Promise<User[]> => {
 	}).promise();
 
 	return result.Items as User[] ?? [];
+};
+
+
+/**
+* Creates a DynamoDB table with the specified table name.
+*
+* @param {string} tableName - The name of the table to create.
+* @returns {Promise<void>} - A promise that resolves when the table is created successfully.
+*/
+export const createUserSavedTable = async (tableName: string): Promise<void> => {
+	const params = {
+		TableName: tableName,
+		KeySchema: [
+			{
+				AttributeName: 'phone',
+				KeyType: 'HASH',
+			},
+		],
+		AttributeDefinitions: [
+			{
+				AttributeName: 'phone',
+				AttributeType: 'N',
+			},
+		],
+		BillingMode: 'PAY_PER_REQUEST'
+	};
+
+	await dynamodb.createTable(params).promise();
 };
