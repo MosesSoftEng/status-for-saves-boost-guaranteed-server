@@ -21,7 +21,8 @@ export const saveContact = {
 			],
 			Resource: [
 				'arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TABLE_CONTACTS}',
-				'arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TABLE_FCM_TOKEN}'
+				'arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TABLE_FCM_TOKEN}',
+				'arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TABLE_USERS_SAVED}'
 			],
 		},
 	],
