@@ -4,6 +4,7 @@ import User from '../users/User';
 
 const docClient = new AWS.DynamoDB.DocumentClient();
 const TABLE_CONTACTS = process.env.TABLE_CONTACTS;
+const TABLE_USERS_SAVED = process.env.TABLE_USERS_SAVED;
 
 
 // TODO: Add jsdocs
@@ -75,32 +76,27 @@ export const deleteContactByUserAndPhone = async (user: number, phone: number): 
 };
 
 /**
- * Retrieves contacts that have saved a specific phone number.
- * @param {number} phone - The phone number to search for in contacts.
- * @param {number} [lastIndex=0] - The last index value from a previous paginated query (optional).
- * @param {number} [limit=10] - The maximum number of contacts to retrieve (optional).
- * @returns {Promise<Contact[]>} - A promise that resolves to an array of contacts.
+ * Retrieves a list of users who have saved a particular phone number.
+ *
+ * @param {number} phone The phone number of the users to retrieve.
+ * @param {number} lastIndex The index of the last user that was retrieved in the previous call to the function.
+ * @param {number} limit The limit on the number of users to retrieve.
+ * @returns {Promise<User[]>} A promise that resolves to a list of User objects.
  */
 export const getUsersThatSavePhoneNumber = async (phone: number, lastIndex = 0, limit = 10): Promise<User[]> => {
+	const tableName = TABLE_USERS_SAVED.replace('*', phone.toString());
+
 	const params = {
-		TableName: TABLE_CONTACTS,
-		IndexName: 'PhoneUserIndex',
-		KeyConditionExpression: 'phone = :phoneValue',
-		ExpressionAttributeValues: {
-			':phoneValue': phone,
-		},
+		TableName: tableName,
+		Limit: limit,
 		ExclusiveStartKey: lastIndex
 			? {
-				phone: phone,
-				user: lastIndex,
+				phone: lastIndex,
 			}
 			: undefined,
-		Limit: limit,
 	};
 
-	const result = await docClient.query(params).promise();
+	const result = await docClient.scan(params).promise();
 
-	const data = result.Items as Contact[] ?? [];
-
-	return data.map(({user, date}) => ({phone: user, date}));
+	return result.Items as User[];
 };
