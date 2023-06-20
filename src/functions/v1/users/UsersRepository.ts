@@ -59,11 +59,12 @@ export const getUsers = async (lastIndex = 0, limit = 10): Promise<User[]> => {
 
 
 /**
-* Creates a DynamoDB table with the specified table name.
+ * Creates a DynamoDB table with the specified table name.
 *
 * @param {string} tableName - The name of the table to create.
 * @returns {Promise<void>} - A promise that resolves when the table is created successfully.
 */
+// TODO: Rename table to createUsersSavedTable
 export const createUserSavedTable = async (tableName: string): Promise<void> => {
 	const params = {
 		TableName: tableName,
@@ -83,4 +84,23 @@ export const createUserSavedTable = async (tableName: string): Promise<void> => 
 	};
 
 	await dynamodb.createTable(params).promise();
+};
+
+
+/**
+ * Adds a user to the "usersSaved" table.
+ * @param {string} tableName - The name of the table to add the user to.
+ * @param {number} phone - The phone number of the user.
+ * @returns {Promise<void>} - A promise that resolves when the user is added successfully.
+ */
+export const addUserToUsersSaved = async (tableName: string, phone: number): Promise<void> => {
+	const params = {
+		TableName: tableName,
+		Item: {
+			phone,
+			date: Date.now(),
+		},
+	};
+
+	await docClient.put(params).promise();
 };
