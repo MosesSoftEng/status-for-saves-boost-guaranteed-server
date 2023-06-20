@@ -31,6 +31,7 @@ const serverlessConfiguration: AWS = {
 
 			//* Dynamodb Tables
 			TABLE_USERS: '${self:service}-users-01-${self:provider.stage}',
+			TABLE_USERS_SAVED: '${self:service}-users-saved-*-${self:provider.stage}',
 			TABLE_CONTACTS: '${self:service}-contacts-${self:provider.stage}',
 			TABLE_FCM_TOKEN: '${self:service}-fcm-token-01-${self:provider.stage}',
 		},
