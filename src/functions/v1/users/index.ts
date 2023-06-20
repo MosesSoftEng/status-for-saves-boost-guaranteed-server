@@ -41,11 +41,11 @@ export const getUsersSavedUser = {
 		{
 			Effect: 'Allow',
 			Action: [
-				'dynamodb:Query',
+				'dynamodb:Scan',
 			],
 			Resource: [
 				'arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TABLE_CONTACTS}',
-				'arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TABLE_CONTACTS}/index/PhoneUserIndex',
+				'arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TABLE_USERS_SAVED}',
 			],
 		},
 	],
