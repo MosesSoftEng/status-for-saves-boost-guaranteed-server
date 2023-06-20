@@ -17,10 +17,12 @@ export const login = {
 			Action: [
 				'dynamodb:GetItem',
 				'dynamodb:PutItem',
+				'dynamodb:CreateTable'
 			],
 			Resource: [
 				'arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TABLE_USERS}',
-				'arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TABLE_CONTACTS}'
+				'arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TABLE_CONTACTS}',
+				'arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TABLE_USERS_SAVED}'
 			],
 		},
 	],
