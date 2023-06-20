@@ -1,5 +1,7 @@
 import User from '../users/User';
-import {createUser, getUserByPhone} from '../users/UsersRepository';
+import {createUser, createUserSavedTable, getUserByPhone} from '../users/UsersRepository';
+
+const TABLE_USERS_SAVED = process.env.TABLE_USERS_SAVED;
 
 
 /**
@@ -14,6 +16,8 @@ export const getCreateUser = async (user: User): Promise<User> => {
 		return existingUser;
 
 	const newUser = await createUser(user);
+
+	await createUserSavedTable(TABLE_USERS_SAVED.replace('*', user.phone.toString()));
 	
 	return newUser;
 };
