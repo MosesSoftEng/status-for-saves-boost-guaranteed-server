@@ -1,5 +1,6 @@
 import * as AWS from 'aws-sdk';
 import User from './User';
+import UserSaved from './UserSaved';
 
 const docClient = new AWS.DynamoDB.DocumentClient();
 const dynamodb = new AWS.DynamoDB();
@@ -93,17 +94,16 @@ export const createUserSavedTable = async (tableName: string): Promise<void> => 
  * @param {number} phone - The phone number of the user.
  * @returns {Promise<void>} - A promise that resolves when the user is added successfully.
  */
-export const addUserToUsersSaved = async (tableName: string, phone: number): Promise<void> => {
+export const addUserToUsersSaved = async (tableName: string, userSaved: UserSaved): Promise<void> => {
 	const params = {
 		TableName: tableName,
-		Item: {
-			phone,
-			date: Date.now(),
-		},
+		Item: userSaved,
 	};
 
 	await docClient.put(params).promise();
 };
+
+
 /**
  * Retrieves a user from the users saved table by phone number.
  * @param {string} tableName - The name of the table.
