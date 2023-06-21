@@ -18,6 +18,27 @@ export const createContact = async (contact: Contact): Promise<Contact> => {
 };
 
 
+/**
+ * Retrieves a contact by user and phone number.
+ * @param {number} user - The user identifier.
+ * @param {number} phone - The phone number.
+ * @returns {Promise<Contact>} - A promise that resolves to the contact object or undefined if not found.
+ */
+export const getContactByUserAndPhone = async (user: number, phone: number): Promise<Contact> => {
+	const params = {
+		TableName: TABLE_CONTACTS,
+		Key: {
+			user,
+			phone
+		}
+	};
+
+	const {Item} = await docClient.get(params).promise();
+
+	return Item as Contact || undefined;
+};
+
+
 // TODO: Add jsdocs
 export const getUnsavedContacts = async (user: string): Promise<Contact[]> => {
 	const result = await docClient.scan({
