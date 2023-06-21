@@ -107,6 +107,14 @@ export const deleteContactByUserAndPhone = async (user: number, phone: number): 
 export const getUsersThatSavePhoneNumber = async (phone: number, lastIndex = 0, limit = 10): Promise<User[]> => {
 	const tableName = TABLE_USERS_SAVED.replace('*', phone.toString());
 
+	const dynamodb = new AWS.DynamoDB();
+
+	try {
+		await dynamodb.describeTable({TableName: tableName}).promise();
+	} catch (error) {
+		return [];
+	}
+
 	const params = {
 		TableName: tableName,
 		Limit: limit,
