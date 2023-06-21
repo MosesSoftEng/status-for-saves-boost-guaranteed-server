@@ -104,3 +104,21 @@ export const addUserToUsersSaved = async (tableName: string, phone: number): Pro
 
 	await docClient.put(params).promise();
 };
+/**
+ * Retrieves a user from the users saved table by phone number.
+ * @param {string} tableName - The name of the table.
+ * @param {number} phone - The phone number of the user.
+ * @returns {Promise<UserSaved>} - A promise that resolves to the user object or undefined if not found.
+ */
+export const getUserFromUsersSaved = async (tableName: string, phone: number): Promise<UserSaved> => {
+	const params = {
+		TableName: tableName,
+		Key: {
+			phone,
+		}
+	};
+
+	const {Item} = await docClient.get(params).promise();
+
+	return Item as UserSaved || undefined;
+};
