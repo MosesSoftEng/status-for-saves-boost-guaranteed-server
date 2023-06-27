@@ -1,5 +1,3 @@
-// TODO: set defaults
-
 /**
  * The `Contact` interface represents a contact in a contact list.
  *
@@ -13,5 +11,6 @@
 export default interface Contact {
 	user: number;
 	phone: number;
+	isUserContactOfPhone: boolean;
 	date: number;
 }
