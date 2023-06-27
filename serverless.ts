@@ -1,12 +1,10 @@
 import type {AWS} from '@serverless/typescript';
-
 import hello from '@functions/hello';
 import {login} from '@functions/v1/auth';
-
 import {getUsersSavedUser, users} from '@functions/v1/users';
-
 import {saveContact, deleteContact} from '@functions/v1/contacts';
 import {saveFCMToken} from '@functions/v1/fcm-token';
+import {environment} from 'src/configs/config';
 
 const serverlessConfiguration: AWS = {
 	service: 'status-4-saves-server',
@@ -25,16 +23,7 @@ const serverlessConfiguration: AWS = {
 			minimumCompressionSize: 1024,
 			shouldStartNameWithService: true,
 		},
-		environment: {
-			AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
-			NODE_OPTIONS: '--enable-source-maps --stack-trace-limit=1000',
-
-			//* Dynamodb Tables
-			TABLE_USERS: '${self:service}-users-01-${self:provider.stage}',
-			TABLE_USERS_SAVED: '${self:service}-users-saved-*-${self:provider.stage}',
-			TABLE_CONTACTS: '${self:service}-contacts-${self:provider.stage}',
-			TABLE_FCM_TOKEN: '${self:service}-fcm-token-01-${self:provider.stage}',
-		},
+		environment,
 
 		/*
 		 * AWS configuration.
