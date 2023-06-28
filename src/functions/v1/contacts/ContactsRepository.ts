@@ -7,7 +7,12 @@ const TABLE_CONTACTS = process.env.TABLE_CONTACTS;
 const TABLE_USERS_SAVED = process.env.TABLE_USERS_SAVED;
 
 
-// TODO: Add jsdocs
+/**
+ * Creates a contact by saving it to the contacts table.
+ *
+ * @param {Contact} contact - The contact to create.
+ * @returns {Promise<Contact>} - A promise that resolves to the created contact.
+ */
 export const createContact = async (contact: Contact): Promise<Contact> => {
 	await docClient.put({
 		TableName: TABLE_CONTACTS,
@@ -15,6 +20,17 @@ export const createContact = async (contact: Contact): Promise<Contact> => {
 	}).promise();
 
 	return contact;
+};
+
+
+/**
+ * Updates a contact by replacing its data in the contacts table.
+ *
+ * @param {Contact} contact - The updated contact data.
+ * @returns {Promise<Contact>} - A promise that resolves to the updated contact.
+ */
+export const updateContact = async (contact: Contact): Promise<Contact> => {
+	return createContact(contact);
 };
 
 
