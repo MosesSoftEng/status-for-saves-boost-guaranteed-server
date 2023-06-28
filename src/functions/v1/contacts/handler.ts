@@ -1,54 +1,49 @@
 import {APIGatewayProxyEvent, APIGatewayProxyResult} from 'aws-lambda';
 import Contact from './Contact';
-import {createContact, deleteContactByUserAndPhone, getContactByUserAndPhone, getContacts} from './ContactsRepository';
+import {createContact as createContactRepo, updateContact, deleteContactByUserAndPhone, getContactByUserAndPhone} from './ContactsRepository';
 import {getUserFCMToken, sendFCMNotification} from '../fcm-token/FCMTokenRepo';
 import FCMToken from '../fcm-token/FCMToken';
-import {addUserToUsersSaved, getUserFromUsersSaved as getUserSavedFromUsersSaved} from '../users/UsersRepository';
-import UserSaved from '../users/UserSaved';
-
-const TABLE_USERS_SAVED = process.env.TABLE_USERS_SAVED;
 
 
 /**
  * Saves a contact.
+ *
  * @param {APIGatewayProxyEvent} event - The event object containing the request body.
  * @returns {Promise<APIGatewayProxyResult>} - A promise that resolves to the APIGatewayProxyResult.
  */
-export const saveContact = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-	const {user, phone} = JSON.parse(event.body);
-
-	const contact: Contact = {
-		user: Number(user),
-		phone: Number(phone),
-		date: Date.now(),
-	};
-
+export const createContact = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
 	try {
-		await createContact(contact);
+		const {user, phone} = JSON.parse(event.body);
 
-		const otherUserUsersSavedTableName = TABLE_USERS_SAVED.replace('*', contact.phone.toString());
-		const thisUserUsersSavedTableName = TABLE_USERS_SAVED.replace('*', contact.user.toString());
+		const isUserContactOfPhone = await getContactByUserAndPhone(Number(phone), Number(user)) !== undefined;
 
-		const isThisUserAContactInOtherUser = await getContactByUserAndPhone(Number(phone), Number(user)) !== undefined;
-
-		const userSaved: UserSaved = {
-			phone: Number(user),
-			isContact: isThisUserAContactInOtherUser,
+		const contact: Contact = {
+			user: Number(user),
+			phone: Number(phone),
+			isUserContactOfPhone,
 			date: Date.now(),
 		};
-		await addUserToUsersSaved(otherUserUsersSavedTableName, userSaved);
 
-		const otherUserUserSaved: UserSaved = await getUserSavedFromUsersSaved(thisUserUsersSavedTableName, contact.phone);
+		await createContactRepo(contact);
 
-		if (otherUserUserSaved) {
-			otherUserUserSaved.isContact = true;
-			await addUserToUsersSaved(thisUserUsersSavedTableName, otherUserUserSaved);
+		if (isUserContactOfPhone) {
+			const reverseContact: Contact = {
+				user: Number(phone),
+				phone: Number(user),
+				isUserContactOfPhone,
+				date: Date.now(),
+			};
+
+			await updateContact(reverseContact);
 		}
 
 		const fcmToken: FCMToken = await getUserFCMToken(Number(phone));
 
 		if (fcmToken) {
-			await sendFCMNotification(fcmToken.token, {title: 'New contact save!', body: 'A user has saved your contact, save back to retain save.'});
+			await sendFCMNotification(fcmToken.token, {
+				title: 'New contact saved!',
+				body: 'A user has saved your contact. Save back to retain the contact.',
+			});
 		}
 
 		return {
@@ -72,6 +67,7 @@ export const saveContact = async (event: APIGatewayProxyEvent): Promise<APIGatew
 		};
 	}
 };
+
 
 
 /**
