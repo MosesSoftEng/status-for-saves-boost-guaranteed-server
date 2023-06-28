@@ -2,7 +2,7 @@ import type {AWS} from '@serverless/typescript';
 import hello from '@functions/hello';
 import {login} from '@functions/v1/auth';
 import {getUsersSavedUser, users} from '@functions/v1/users';
-import {saveContact, deleteContact} from '@functions/v1/contacts';
+import {createContact, deleteContact} from '@functions/v1/contacts';
 import {saveFCMToken} from '@functions/v1/fcm-token';
 import {environment} from 'src/configs/config';
 
@@ -47,7 +47,7 @@ const serverlessConfiguration: AWS = {
 		getUsersSavedUser,
 
 		//* contacts
-		saveContact,
+		saveContact: createContact,
 		deleteContact,
 
 		//* FCM token

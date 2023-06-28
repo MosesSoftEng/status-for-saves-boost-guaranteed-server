@@ -1,8 +1,8 @@
 import { handlerPath } from '@libs/handler-resolver';
 
 
-export const saveContact = {
-	handler: `${handlerPath(__dirname)}/handler.saveContact`,
+export const createContact = {
+	handler: `${handlerPath(__dirname)}/handler.createContact`,
 	events: [
 		{
 			http: {
