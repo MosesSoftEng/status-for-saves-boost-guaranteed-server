@@ -1,7 +1,7 @@
 import {APIGatewayProxyEvent, APIGatewayProxyResult} from 'aws-lambda';
 import User from './User';
 import {getUsers} from './UsersRepository';
-import {getUsersThatSavePhoneNumber} from '../contacts/ContactsRepository';
+import {getUsersAreContact, getUsersNotContact, getUsersThatSavePhoneNumber} from '../contacts/ContactsRepository';
 
 /**
  * Lambda function to handle API Gateway event and retrieve users.

@@ -43,7 +43,7 @@ const serverlessConfiguration: AWS = {
 		login,
 
 		//* Users
-		users,
+		getUsers,
 		getUsersSavedUser,
 
 		//* contacts
