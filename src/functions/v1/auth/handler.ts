@@ -1,7 +1,6 @@
 import {APIGatewayProxyEvent, APIGatewayProxyResult} from 'aws-lambda';
 import User from '../users/User';
 import {getCreateUser} from './AuthService';
-import {createContactServ} from '../contacts/ContactsService';
 
 
 /**
@@ -19,7 +18,6 @@ export const login = async (event: APIGatewayProxyEvent): Promise<APIGatewayProx
 
 	try {
 		await getCreateUser(user);
-		await createContactServ(Number(whatsAppPhoneNumber), Number(whatsAppPhoneNumber));
 
 		return {
 			statusCode: 200,
