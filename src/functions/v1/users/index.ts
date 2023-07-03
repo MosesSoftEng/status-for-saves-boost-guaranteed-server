@@ -2,6 +2,7 @@ import {handlerPath} from '@libs/handler-resolver';
 
 
 export const users = {
+export const getUsersHan = {
 	handler: `${handlerPath(__dirname)}/handler.users`,
 	events: [
 		{

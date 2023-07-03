@@ -10,6 +10,7 @@ import {getUsersThatSavePhoneNumber} from '../contacts/ContactsRepository';
  * @returns {Promise<APIGatewayProxyResult>} The Promise resolving to the API Gateway proxy result.
  */
 export const users = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
+export const getUsersHan = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
 	const {lastIndex, limit} = event.queryStringParameters ?? {};
 
 	try {
