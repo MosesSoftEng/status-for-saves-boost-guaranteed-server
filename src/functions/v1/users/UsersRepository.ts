@@ -2,6 +2,8 @@ import * as AWS from 'aws-sdk';
 import User from './User';
 import UserSaved from './UserSaved';
 
+import {isContactExistServ} from '../contacts/ContactsService';
+
 const docClient = new AWS.DynamoDB.DocumentClient();
 const dynamodb = new AWS.DynamoDB();
 AWS.config.update({region: 'us-east-1'});
@@ -56,6 +58,46 @@ export const getUsers = async (lastIndex = 0, limit = 10): Promise<User[]> => {
 	}).promise();
 
 	return result.Items as User[] ?? [];
+};
+
+
+/**
+ * Retrieves a list of users who are not a contact with the specified phone number.
+ * @param {number} phone - The phone number to check for contacts.
+ * @param {number} [lastIndex=0] - The last index from the previous query (for pagination).
+ * @param {number} [limit=10] - The maximum number of users to retrieve.
+ * @returns {Promise<User[]>} - A promise that resolves to an array of User objects.
+ */
+export const getUsersNotContact = async (phone: number, lastIndex = 0, limit = 10): Promise<User[]> => {
+	const filteredUsers: User[] = [];
+
+	while (filteredUsers.length < limit) {
+		const users: User[] = await getUsers(lastIndex, limit - filteredUsers.length);
+
+		if (users.length === 0) {
+			break; // No more users to fetch, exit the loop
+		}
+
+		for (const user of users) {
+			if (user.phone === phone) {
+				continue; // Skip the user with the provided phone number
+			}
+
+			const isContact: boolean = await isContactExistServ(phone, user.phone);
+
+			if (!isContact) {
+				filteredUsers.push(user);
+			}
+
+			if (filteredUsers.length === limit) {
+				break; // Reached the limit, exit the loop
+			}
+		}
+
+		lastIndex = users[users.length - 1].phone;
+	}
+
+	return filteredUsers;
 };
 
 
