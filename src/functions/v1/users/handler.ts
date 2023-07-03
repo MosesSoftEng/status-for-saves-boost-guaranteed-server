@@ -1,7 +1,7 @@
 import {APIGatewayProxyEvent, APIGatewayProxyResult} from 'aws-lambda';
 import User from './User';
-import {getUsers} from './UsersRepository';
-import {getUsersAreContact, getUsersNotContact, getUsersThatSavePhoneNumber} from '../contacts/ContactsRepository';
+import {getUsers, getUsersNotContact} from './UsersRepository';
+import {getUsersAreContact, getUsersThatSavePhoneNumber} from '../contacts/ContactsRepository';
 
 /**
  * Lambda function to handle API Gateway event and retrieve users.
@@ -9,7 +9,6 @@ import {getUsersAreContact, getUsersNotContact, getUsersThatSavePhoneNumber} fro
  * @param {APIGatewayProxyEvent} event - The event object representing the API Gateway event.
  * @returns {Promise<APIGatewayProxyResult>} The Promise resolving to the API Gateway proxy result.
  */
-export const users = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
 export const getUsersHan = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
 	const {lastIndex, limit} = event.queryStringParameters ?? {};
 
@@ -43,12 +42,81 @@ export const getUsersHan = async (event: APIGatewayProxyEvent): Promise<APIGatew
 };
 
 
+export const getUsersAreContactHan = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
+	const {user} = event.pathParameters;
+	const {lastIndex, limit} = event.queryStringParameters ?? {};
+
+	try {
+		const users = await getUsersAreContact(Number(user), Number(lastIndex), Number(limit));
+
+		return {
+			statusCode: 200,
+			headers: {
+				'Access-Control-Allow-Origin': '*',
+			},
+			body: JSON.stringify({
+				message: 'Users retrieved successfully',
+				data: users,
+			}),
+		};
+	} catch (error) {
+		console.error('getUsersAreContact, error: ', error);
+
+		return {
+			statusCode: 500,
+			headers: {
+				'Access-Control-Allow-Origin': '*',
+			},
+			body: JSON.stringify({
+				message: 'Failed to retrieve users',
+				error: error.message,
+			}),
+		};
+	}
+};
+
+
+export const getUsersNotContactHan = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
+	const {user} = event.pathParameters;
+	const {lastIndex, limit} = event.queryStringParameters ?? {};
+
+	try {
+		const users = await getUsersNotContact(Number(user), Number(lastIndex), Number(limit));
+
+		return {
+			statusCode: 200,
+			headers: {
+				'Access-Control-Allow-Origin': '*',
+			},
+			body: JSON.stringify({
+				message: 'Users retrieved successfully',
+				data: users,
+			}),
+		};
+	} catch (error) {
+		console.error('getUsersSavedUser, error: ', error);
+
+		return {
+			statusCode: 500,
+			headers: {
+				'Access-Control-Allow-Origin': '*',
+			},
+			body: JSON.stringify({
+				message: 'Failed to retrieve users',
+				error: error.message,
+			}),
+		};
+	}
+};
+
+
+// TODO: Delete function.
 /**
  * Retrieves users that have saved a specific phone number.
  * @param {APIGatewayProxyEvent} event - The event object representing the HTTP request.
  * @returns {Promise<APIGatewayProxyResult>} - A promise that resolves to the APIGatewayProxyResult object.
  */
-export const getUsersSavedUser = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
+export const getUsersSavedUserHan = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
 	const {user} = event.pathParameters;
 	const {lastIndex, limit} = event.queryStringParameters ?? {};
 
