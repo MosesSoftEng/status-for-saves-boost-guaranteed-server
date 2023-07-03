@@ -18,3 +18,17 @@ export const createContactServ = async (user: number, phone: number): Promise<Co
 
 	return createContact(contact);
 };
+
+
+/**
+ * Checks if a contact exists between the given user and phone number.
+ *
+ * @param {number} user - The user identifier.
+ * @param {number} phone - The phone number.
+ * @returns {Promise<boolean>} - A promise that resolves to a boolean indicating if the contact exists.
+ */
+export const isContactExistServ = async (user: number, phone: number): Promise<boolean> => {
+	const isPhoneUserContact: boolean = await getContactByUserAndPhone(user, phone) !== undefined;
+
+	return isPhoneUserContact;
+};
