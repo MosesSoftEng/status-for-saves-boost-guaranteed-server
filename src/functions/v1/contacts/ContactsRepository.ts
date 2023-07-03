@@ -145,3 +145,29 @@ export const getUsersThatSavePhoneNumber = async (phone: number, lastIndex = 0, 
 
 	return result.Items as User[];
 };
+
+
+export const getUsersAreContact = async (phone: number, lastIndex = 0, limit = undefined): Promise<User[]> => {
+	const params = {
+		TableName: TABLE_CONTACTS,
+		FilterExpression: '#user = :phoneValue AND #phone <> :phoneValue',
+		ProjectionExpression: '#phone, #date',
+		ExpressionAttributeNames: {
+			'#user': 'user',
+			'#phone': 'phone',
+			'#date': 'date',
+		},
+		ExpressionAttributeValues: {
+			':phoneValue': phone,
+		},
+		ExclusiveStartKey: lastIndex ? {user: lastIndex} : undefined,
+	};
+
+	if(limit){
+		params.Limit = limit;
+	}
+
+	const result = await docClient.scan(params).promise();
+
+	return result.Items as User[];
+};
