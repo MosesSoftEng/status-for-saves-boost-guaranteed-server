@@ -47,7 +47,6 @@ export const getUsersSavedUser = {
 			],
 			Resource: [
 				'arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TABLE_CONTACTS}',
-				'arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TABLE_USERS_SAVED}',
 			],
 		},
 	],
