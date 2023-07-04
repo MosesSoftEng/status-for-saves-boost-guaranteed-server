@@ -106,3 +106,28 @@ export const getUsersAreContact = {
 		},
 	],
 };
+
+
+export const deleteUser = {
+	handler: `${handlerPath(__dirname)}/handler.deleteUserHan`,
+	events: [
+		{
+			http: {
+				method: 'get',
+				path: 'v1/users/delete/{user}',
+				cors: true,
+			},
+		},
+	],
+	iamRoleStatements: [
+		{
+			Effect: 'Allow',
+			Action: [
+				'dynamodb:DeleteItem'
+			],
+			Resource: [
+				'arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TABLE_USERS}',
+			],
+		},
+	],
+};

@@ -1,6 +1,6 @@
 import {APIGatewayProxyEvent, APIGatewayProxyResult} from 'aws-lambda';
 import User from './User';
-import {getUsers, getUsersAreContact, getUsersNotContact, getUsersThatSavePhoneNumber} from './UsersRepository';
+import {deleteUser, getUsers, getUsersAreContact, getUsersNotContact, getUsersThatSavePhoneNumber} from './UsersRepository';
 
 /**
  * Lambda function to handle API Gateway event and retrieve users.
@@ -141,6 +141,39 @@ export const getUsersSavedUserHan = async (event: APIGatewayProxyEvent): Promise
 			},
 			body: JSON.stringify({
 				message: 'Failed to retrieve users',
+				error: error.message,
+			}),
+		};
+	}
+};
+
+
+export const deleteUserHan = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
+	const {user} = event.pathParameters;
+
+	try {
+		const users = await deleteUser(Number(user));
+
+		return {
+			statusCode: 200,
+			headers: {
+				'Access-Control-Allow-Origin': '*',
+			},
+			body: JSON.stringify({
+				message: 'Users deleted successfully',
+				data: users,
+			}),
+		};
+	} catch (error) {
+		console.error('getUsersSavedUser, error: ', error);
+
+		return {
+			statusCode: 500,
+			headers: {
+				'Access-Control-Allow-Origin': '*',
+			},
+			body: JSON.stringify({
+				message: 'Failed to delete user',
 				error: error.message,
 			}),
 		};

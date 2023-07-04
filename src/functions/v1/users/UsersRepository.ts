@@ -62,6 +62,22 @@ export const getUsers = async (lastIndex = 0, limit = 10): Promise<User[]> => {
 };
 
 
+/**
+ * Deletes the user with the specified phone number.
+ * @param {number} phone - The phone number of the user to delete.
+ * @returns {Promise<void>}
+ */
+export const deleteUser = async (phone): Promise<void> => {
+	const params = {
+		TableName: TABLE_USERS,
+		Key: {
+			phone: phone,
+		},
+	};
+
+	await docClient.delete(params).promise();
+};
+
 
 /**
  * Retrieves the users that are contacts of the specified phone.
@@ -95,7 +111,6 @@ export const getUsersAreContact = async (phone, lastIndex = 0, limit) => {
 
 	return result.Items;
 };
-
 
 
 /**
