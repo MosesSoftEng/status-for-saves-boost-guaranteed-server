@@ -9,6 +9,7 @@ const dynamodb = new AWS.DynamoDB();
 AWS.config.update({region: 'us-east-1'});
 
 const TABLE_USERS = process.env.TABLE_USERS;
+const TABLE_CONTACTS = process.env.TABLE_CONTACTS;
 
 
 /**
@@ -138,12 +139,49 @@ export const getUsersNotContact = async (phone: number, lastIndex = 0, limit = 1
 
 
 /**
+ * Retrieves a list of users who have saved a particular phone number.
+ *
+ * @param {number} phone The phone number of the users to retrieve.
+ * @param {number} lastIndex The index of the last user that was retrieved in the previous call to the function.
+ * @param {number} limit The limit on the number of users to retrieve.
+ * @returns {Promise<User[]>} A promise that resolves to a list of User objects.
+ */
+export const getUsersThatSavePhoneNumber = async (phone: number, lastIndex = 0, limit = 10): Promise<User[]> => {
+	const params = {
+		TableName: TABLE_CONTACTS,
+		IndexName: 'PhoneUserIndex',
+		KeyConditionExpression: '#phone = :phoneValue',
+		ExpressionAttributeNames: {
+			'#phone': 'phone',
+		},
+		ExpressionAttributeValues: {
+			':phoneValue': phone,
+		},
+		Limit: limit,
+		ExclusiveStartKey: lastIndex ? {
+			phone,
+			user: lastIndex
+		} : undefined,
+	};
+
+	const result = await docClient.query(params).promise();
+
+	const users: User[] = result.Items.map((contact) => {
+		const {user, date} = contact;
+		return {phone: user, date};
+	});
+
+	return users;
+};
+
+
+/**
  * Creates a DynamoDB table with the specified table name.
 *
 * @param {string} tableName - The name of the table to create.
 * @returns {Promise<void>} - A promise that resolves when the table is created successfully.
 */
-// TODO: Rename table to createUsersSavedTable
+// TODO: Delete
 export const createUserSavedTable = async (tableName: string): Promise<void> => {
 	const params = {
 		TableName: tableName,
