@@ -1,7 +1,6 @@
 import {APIGatewayProxyEvent, APIGatewayProxyResult} from 'aws-lambda';
 import User from './User';
-import {getUsers, getUsersNotContact} from './UsersRepository';
-import {getUsersAreContact, getUsersThatSavePhoneNumber} from '../contacts/ContactsRepository';
+import {getUsers, getUsersAreContact, getUsersNotContact, getUsersThatSavePhoneNumber} from './UsersRepository';
 
 /**
  * Lambda function to handle API Gateway event and retrieve users.
@@ -110,7 +109,6 @@ export const getUsersNotContactHan = async (event: APIGatewayProxyEvent): Promis
 };
 
 
-// TODO: Delete function.
 /**
  * Retrieves users that have saved a specific phone number.
  * @param {APIGatewayProxyEvent} event - The event object representing the HTTP request.
