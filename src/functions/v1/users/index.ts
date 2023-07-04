@@ -42,7 +42,8 @@ export const getUsersSavedUser = {
 			Effect: 'Allow',
 			Action: [
 				'dynamodb:Scan',
-				'dynamodb:DescribeTable'
+				'dynamodb:DescribeTable',
+				'dynamodb:Query',
 			],
 			Resource: [
 				'arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TABLE_CONTACTS}',
