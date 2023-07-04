@@ -4,7 +4,6 @@ import User from '../users/User';
 
 const docClient = new AWS.DynamoDB.DocumentClient();
 const TABLE_CONTACTS = process.env.TABLE_CONTACTS;
-const TABLE_USERS_SAVED = process.env.TABLE_USERS_SAVED;
 
 
 /**
@@ -120,33 +119,36 @@ export const deleteContactByUserAndPhone = async (user: number, phone: number): 
  * @param {number} limit The limit on the number of users to retrieve.
  * @returns {Promise<User[]>} A promise that resolves to a list of User objects.
  */
+// TODO: Move function to user repository.
 export const getUsersThatSavePhoneNumber = async (phone: number, lastIndex = 0, limit = 10): Promise<User[]> => {
-	const tableName = TABLE_USERS_SAVED.replace('*', phone.toString());
-
-	const dynamodb = new AWS.DynamoDB();
-
-	try {
-		await dynamodb.describeTable({TableName: tableName}).promise();
-	} catch (error) {
-		return [];
-	}
-
 	const params = {
-		TableName: tableName,
+		TableName: TABLE_CONTACTS,
+		KeyConditionExpression: '#user = :userValue AND #phone > :lastIndexValue',
+		FilterExpression: '#isUserContactOfPhone = :isUserContactOfPhoneValue',
+		ExpressionAttributeNames: {
+			'#user': 'user',
+			'#phone': 'phone',
+			'#isUserContactOfPhone': 'isUserContactOfPhone',
+		},
+		ExpressionAttributeValues: {
+			':userValue': phone,
+			':lastIndexValue': lastIndex,
+			':isUserContactOfPhoneValue': false,
+		},
 		Limit: limit,
-		ExclusiveStartKey: lastIndex
-			? {
-				phone: lastIndex,
-			}
-			: undefined,
 	};
 
-	const result = await docClient.scan(params).promise();
+	const result = await docClient.query(params).promise();
 
-	return result.Items as User[];
+	const users: User[] = result.Items.map((contact) => {
+		const {phone, date} = contact;
+		return {phone, date};
+	});
+
+	return users;
 };
 
-
+// TODO: Delete function f not in use.
 export const getUsersAreContact = async (phone: number, lastIndex = 0, limit = undefined): Promise<User[]> => {
 	const params = {
 		TableName: TABLE_CONTACTS,
@@ -163,7 +165,7 @@ export const getUsersAreContact = async (phone: number, lastIndex = 0, limit = u
 		ExclusiveStartKey: lastIndex ? {user: lastIndex} : undefined,
 	};
 
-	if(limit){
+	if (limit) {
 		params.Limit = limit;
 	}
 
