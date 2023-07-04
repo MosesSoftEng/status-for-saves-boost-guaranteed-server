@@ -1,5 +1,6 @@
 import {APIGatewayProxyEvent, APIGatewayProxyResult} from 'aws-lambda';
 import Contact from './Contact';
+// TODO: rename functions to repo.
 import {createContact as createContactRepo, updateContact, deleteContactByUserAndPhone, getContactByUserAndPhone} from './ContactsRepository';
 import {getUserFCMToken, sendFCMNotification} from '../fcm-token/FCMTokenRepo';
 import FCMToken from '../fcm-token/FCMToken';
