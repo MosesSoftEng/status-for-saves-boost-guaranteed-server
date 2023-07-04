@@ -61,6 +61,42 @@ export const getUsers = async (lastIndex = 0, limit = 10): Promise<User[]> => {
 };
 
 
+
+/**
+ * Retrieves the users that are contacts of the specified phone.
+ * @param {number} phone - The phone number to check contacts for.
+ * @param {number} [lastIndex=0] - The last index value from the previous query to continue the scan from.
+ * @param {number} [limit=undefined] - The maximum number of users to retrieve.
+ * @returns {Promise<User[]>} The list of users that are contacts of the specified phone.
+ */
+export const getUsersAreContact = async (phone, lastIndex = 0, limit) => {
+	/**
+	 * The DynamoDB scan parameters.
+	 * @type {import("aws-sdk/clients/dynamodb").ScanInput}
+	 */
+	const params = {
+		TableName: TABLE_CONTACTS,
+		FilterExpression: '#user = :phoneValue AND #phone <> :phoneValue',
+		ProjectionExpression: '#phone, #date',
+		ExpressionAttributeNames: {
+			'#user': 'user',
+			'#phone': 'phone',
+			'#date': 'date',
+		},
+		ExpressionAttributeValues: {
+			':phoneValue': phone,
+		},
+		Limit: limit,
+		ExclusiveStartKey: lastIndex ? {user: lastIndex} : undefined,
+	};
+
+	const result = await docClient.scan(params).promise();
+
+	return result.Items;
+};
+
+
+
 /**
  * Retrieves a list of users who are not a contact with the specified phone number.
  * @param {number} phone - The phone number to check for contacts.
