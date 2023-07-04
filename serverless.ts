@@ -106,7 +106,6 @@ const serverlessConfiguration: AWS = {
 					],
 					BillingMode: 'PAY_PER_REQUEST',
 					GlobalSecondaryIndexes: [
-						// TODO: Delete
 						{
 							IndexName: 'PhoneIndex',
 							KeySchema: [
