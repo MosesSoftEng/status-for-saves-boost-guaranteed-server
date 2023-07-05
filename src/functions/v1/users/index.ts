@@ -131,3 +131,17 @@ export const deleteUser = {
 		},
 	],
 };
+
+export const deleteUserRequest = {
+	handler: `${handlerPath(__dirname)}/handler.deleteUserRequestHan`,
+	events: [
+		{
+			http: {
+				method: 'get',
+				path: 'v1/users/delete/request',
+				cors: true,
+			},
+		},
+	]
+};
+

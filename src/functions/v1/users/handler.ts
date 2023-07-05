@@ -179,3 +179,32 @@ export const deleteUserHan = async (event: APIGatewayProxyEvent): Promise<APIGat
 		};
 	}
 };
+
+
+export const deleteUserRequestHan = async (): Promise<APIGatewayProxyResult> => {
+	const htmlForm = `
+    <form method="get" action="https://ywu7goj8i4.execute-api.us-east-1.amazonaws.com/dev/v1/users/delete">
+      <label for="phone">Phone Number:</label>
+      <input type="text" id="phone" name="phone" required>
+      <br>
+      <input type="submit" value="Delete User" onclick="appendPhone()">
+    </form>
+
+    <script>
+      function appendPhone() {
+        const phoneInput = document.getElementById('phone');
+        const phoneValue = phoneInput.value;
+        const form = document.querySelector('form');
+        form.action = form.action + '/' + phoneValue;
+      }
+    </script>
+  `;
+
+	return {
+		statusCode: 200,
+		headers: {
+			'Content-Type': 'text/html',
+		},
+		body: htmlForm,
+	};
+};
