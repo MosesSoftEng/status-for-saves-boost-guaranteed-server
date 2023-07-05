@@ -86,6 +86,38 @@ export const deleteUserContacts = async (user: number): Promise<void> => {
 };
 
 
+/**
+ * Deletes contacts with the specified user as the phone attribute in the TABLE_CONTACTS table.
+ * @param user The user phone number to match for deleting contacts.
+ * @returns A Promise that resolves when the deletion is complete.
+ */
+export const deleteContactsWithUser = async (user: number): Promise<void> => {
+	const params = {
+		TableName: TABLE_CONTACTS,
+		FilterExpression: '#phone = :userValue',
+		ExpressionAttributeNames: {
+			'#phone': 'phone',
+		},
+		ExpressionAttributeValues: {
+			':userValue': user,
+		},
+	};
+
+	const result = await docClient.scan(params).promise();
+	const deletePromises = result.Items.map((item) => {
+		const deleteParams = {
+			TableName: TABLE_CONTACTS,
+			Key: {
+				user: item.user,
+				phone: item.phone,
+			},
+		};
+		return docClient.delete(deleteParams).promise();
+	});
+	await Promise.all(deletePromises);
+};
+
+
 // TODO: Add jsdocs
 export const getUnsavedContacts = async (user: string): Promise<Contact[]> => {
 	const result = await docClient.scan({

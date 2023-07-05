@@ -1,7 +1,8 @@
 import {APIGatewayProxyEvent, APIGatewayProxyResult} from 'aws-lambda';
 import User from './User';
 import {deleteUser, getUsers, getUsersAreContact, getUsersNotContact, getUsersThatSavePhoneNumber} from './UsersRepository';
-import {deleteUserContacts} from '../contacts/ContactsRepository';
+import {deleteUserContacts, deleteContactsWithUser} from '../contacts/ContactsRepository';
+
 
 /**
  * Lambda function to handle API Gateway event and retrieve users.
@@ -155,6 +156,7 @@ export const deleteUserHan = async (event: APIGatewayProxyEvent): Promise<APIGat
 	try {
 		await deleteUser(Number(user));
 		await deleteUserContacts(Number(user));
+		await deleteContactsWithUser(Number(user));
 
 		return {
 			statusCode: 200,
