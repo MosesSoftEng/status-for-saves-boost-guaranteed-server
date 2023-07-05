@@ -1,6 +1,7 @@
 import {APIGatewayProxyEvent, APIGatewayProxyResult} from 'aws-lambda';
 import User from './User';
 import {deleteUser, getUsers, getUsersAreContact, getUsersNotContact, getUsersThatSavePhoneNumber} from './UsersRepository';
+import {deleteUserContacts} from '../contacts/ContactsRepository';
 
 /**
  * Lambda function to handle API Gateway event and retrieve users.
@@ -152,7 +153,8 @@ export const deleteUserHan = async (event: APIGatewayProxyEvent): Promise<APIGat
 	const {user} = event.pathParameters;
 
 	try {
-		const users = await deleteUser(Number(user));
+		await deleteUser(Number(user));
+		await deleteUserContacts(Number(user));
 
 		return {
 			statusCode: 200,
@@ -160,8 +162,7 @@ export const deleteUserHan = async (event: APIGatewayProxyEvent): Promise<APIGat
 				'Access-Control-Allow-Origin': '*',
 			},
 			body: JSON.stringify({
-				message: 'Users deleted successfully',
-				data: users,
+				message: 'User data deleted.',
 			}),
 		};
 	} catch (error) {
@@ -183,6 +184,8 @@ export const deleteUserHan = async (event: APIGatewayProxyEvent): Promise<APIGat
 
 export const deleteUserRequestHan = async (): Promise<APIGatewayProxyResult> => {
 	const htmlForm = `
+	<h1>Request to delete all my data.</h1>
+	<p>This will permanently delete all your information we have. Complete form below</p>
     <form method="get" action="https://ywu7goj8i4.execute-api.us-east-1.amazonaws.com/dev/v1/users/delete">
       <label for="phone">Phone Number:</label>
       <input type="text" id="phone" name="phone" required>

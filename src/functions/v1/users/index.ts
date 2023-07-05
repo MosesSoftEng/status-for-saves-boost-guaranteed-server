@@ -123,10 +123,12 @@ export const deleteUser = {
 		{
 			Effect: 'Allow',
 			Action: [
-				'dynamodb:DeleteItem'
+				'dynamodb:DeleteItem',
+				'dynamodb:Query'
 			],
 			Resource: [
 				'arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TABLE_USERS}',
+				'arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TABLE_CONTACTS}',
 			],
 		},
 	],
