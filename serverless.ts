@@ -2,6 +2,7 @@ import type {AWS} from '@serverless/typescript';
 import {environment} from 'src/configs/config';
 import { createTicket } from '@functions/v1/tickets';
 
+
 const serverlessConfiguration: AWS = {
 	service: "vip-tickets-server",
 	frameworkVersion: "3",
