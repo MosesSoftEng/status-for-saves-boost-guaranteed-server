@@ -1,24 +1,18 @@
 import type {AWS} from '@serverless/typescript';
-import hello from '@functions/hello';
-import {login} from '@functions/v1/auth';
-import {getUsersSavedUser, getUsers, getUsersNotContact, getUsersAreContact, deleteUser, deleteUserRequest} from '@functions/v1/users';
-import {createContact, deleteContact} from '@functions/v1/contacts';
-import {saveFCMToken} from '@functions/v1/fcm-token';
 import {environment} from 'src/configs/config';
+import { createTicket } from '@functions/v1/tickets';
 
 const serverlessConfiguration: AWS = {
-	service: 'status-4-saves-server',
-	frameworkVersion: '3',
+	service: "vip-tickets-server",
+	frameworkVersion: "3",
 
 	/*
 	 * Plugins
 	 */
-	plugins: [
-		'serverless-esbuild',
-		'serverless-iam-roles-per-function',],
+	plugins: ["serverless-esbuild", "serverless-iam-roles-per-function"],
 	provider: {
-		name: 'aws',
-		runtime: 'nodejs14.x',
+		name: "aws",
+		runtime: "nodejs14.x",
 		apiGateway: {
 			minimumCompressionSize: 1024,
 			shouldStartNameWithService: true,
@@ -28,34 +22,16 @@ const serverlessConfiguration: AWS = {
 		/*
 		 * AWS configuration.
 		 */
-		profile: 'default',
-		stage: 'dev',
-		region: 'us-east-1',
+		profile: "default",
+		stage: "dev",
+		region: "us-east-1",
 	},
 
 	/*
 	 * Functions.
 	 */
 	functions: {
-		hello,
-
-		//* Auth
-		login,
-
-		//* Users
-		getUsers,
-		getUsersSavedUser,
-		getUsersAreContact,
-		getUsersNotContact,
-		deleteUser,
-		deleteUserRequest,
-
-		//* contacts
-		saveContact: createContact,
-		deleteContact,
-
-		//* FCM token
-		saveFCMToken,
+		createTicket,
 	},
 
 	/*
@@ -63,114 +39,38 @@ const serverlessConfiguration: AWS = {
 	 */
 	resources: {
 		Resources: {
-			UsersTable: {
-				Type: 'AWS::DynamoDB::Table',
+			TicketsTable: {
+				Type: "AWS::DynamoDB::Table",
 				Properties: {
-					TableName: '${self:provider.environment.TABLE_USERS}',
+					TableName: "${self:provider.environment.TABLE_TICKETS}",
 					AttributeDefinitions: [
 						{
-							AttributeName: 'phone',
-							AttributeType: 'N',
-						}
-					],
-					KeySchema: [
-						{
-							AttributeName: 'phone',
-							KeyType: 'HASH',
-						}
-					],
-					BillingMode: 'PAY_PER_REQUEST'
-				},
-			},
-			ContactsTable: {
-				Type: 'AWS::DynamoDB::Table',
-				Properties: {
-					TableName: '${self:provider.environment.TABLE_CONTACTS}',
-					AttributeDefinitions: [
-						{
-							AttributeName: 'user',
-							AttributeType: 'N',
-						},
-						{
-							AttributeName: 'phone',
-							AttributeType: 'N',
+							AttributeName: "id",
+							AttributeType: "S",
 						},
 					],
 					KeySchema: [
 						{
-							AttributeName: 'user',
-							KeyType: 'HASH',
-						},
-						{
-							AttributeName: 'phone',
-							KeyType: 'RANGE',
+							AttributeName: "id",
+							KeyType: "HASH",
 						},
 					],
-					BillingMode: 'PAY_PER_REQUEST',
-					GlobalSecondaryIndexes: [
-						{
-							IndexName: 'PhoneIndex',
-							KeySchema: [
-								{
-									AttributeName: 'phone',
-									KeyType: 'HASH',
-								},
-							],
-							Projection: {
-								ProjectionType: 'ALL',
-							},
-						},
-						{
-							IndexName: 'PhoneUserIndex',
-							KeySchema: [
-								{
-									AttributeName: 'phone',
-									KeyType: 'HASH',
-								},
-								{
-									AttributeName: 'user',
-									KeyType: 'RANGE',
-								},
-							],
-							Projection: {
-								ProjectionType: 'ALL',
-							},
-						},
-					],
-				},
-			},
-			FCMTokenTable: {
-				Type: 'AWS::DynamoDB::Table',
-				Properties: {
-					TableName: '${self:provider.environment.TABLE_FCM_TOKEN}',
-					AttributeDefinitions: [
-						{
-							AttributeName: 'user',
-							AttributeType: 'N',
-						}
-					],
-					KeySchema: [
-						{
-							AttributeName: 'user',
-							KeyType: 'HASH',
-						}
-					],
-					BillingMode: 'PAY_PER_REQUEST'
+					BillingMode: "PAY_PER_REQUEST",
 				},
 			},
 		},
 	},
 
-	package: {individually: true},
+	package: { individually: true },
 	custom: {
 		esbuild: {
 			bundle: true,
 			minify: false,
 			sourcemap: true,
-			exclude: ['aws-sdk'],
-			target: 'node14',
-			define: {'require.resolve': undefined},
-			platform: 'node',
+			exclude: ["aws-sdk"],
+			target: "node14",
+			define: { "require.resolve": undefined },
+			platform: "node",
 			concurrency: 10,
 		},
 	},
