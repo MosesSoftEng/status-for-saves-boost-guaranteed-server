@@ -6,6 +6,7 @@ import {createContact, deleteContact} from '@functions/v1/contacts';
 import {saveFCMToken} from '@functions/v1/fcm-token';
 import {environment} from 'src/configs/config';
 
+
 const serverlessConfiguration: AWS = {
 	service: 'status-4-saves-server',
 	frameworkVersion: '3',
